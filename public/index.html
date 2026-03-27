@@ -727,12 +727,16 @@ const approveDraft=async()=>{
           <div style={{height:1,background:"rgba(128,128,128,.15)",margin:"4px 12px"}}/>
           {lanes.map(l=>{
             const uc=unreadCount(l.id);
+            const isHidden=hiddenLanes.has(l.id);
             return(
-              <div key={l.id} style={{padding:"4px 16px",display:"flex",alignItems:"center",justifyContent:"space-between",fontSize:11,opacity:.7}}>
-                <span>{l.icon} {l.label.split(" ")[0]}</span>
+              <div key={l.id} style={{padding:"4px 16px",display:"flex",alignItems:"center",justifyContent:"space-between",fontSize:11,opacity:isHidden?.4:.7}}>
+                <span style={{textDecoration:isHidden?"line-through":"none"}}>{l.icon} {l.label.split(" ")[0]}</span>
                 <div style={{display:"flex",gap:3,alignItems:"center"}}>
-                  {uc>0&&<span className="badge" style={{background:"#1a73e8",color:"white"}}>{uc}</span>}
-                  <span className="badge" style={{background:l.bg,color:l.color}}>{laneMap[l.id]?laneMap[l.id].length:0}</span>
+                  {isHidden
+                    ?<button onClick={()=>toggleHideLane(l.id)} title="Show lane" style={{background:"none",border:"none",cursor:"pointer",fontSize:11,padding:"1px 3px",opacity:.6}}>👁</button>
+                    :<>{uc>0&&<span className="badge" style={{background:"#1a73e8",color:"white"}}>{uc}</span>}
+                    <span className="badge" style={{background:l.bg,color:l.color}}>{laneMap[l.id]?laneMap[l.id].length:0}<\/span></>
+                  }
                 </div>
               </div>
             );
