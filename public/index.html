@@ -735,7 +735,7 @@ const approveDraft=async()=>{
                   {isHidden
                     ?<button onClick={()=>toggleHideLane(l.id)} title="Show lane" style={{background:"none",border:"none",cursor:"pointer",fontSize:11,padding:"1px 3px",opacity:.6}}>👁</button>
                     :<>{uc>0&&<span className="badge" style={{background:"#1a73e8",color:"white"}}>{uc}</span>}
-                    <span className="badge" style={{background:l.bg,color:l.color}}>{laneMap[l.id]?laneMap[l.id].length:0}<\/span></>
+                    <span className="badge" style={{background:l.bg,color:l.color}}>{laneMap[l.id]?laneMap[l.id].length:0}</span></>
                   }
                 </div>
               </div>
