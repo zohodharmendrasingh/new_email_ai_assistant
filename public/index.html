@@ -581,7 +581,7 @@ const approveDraft=async()=>{
         ))}
       </div>
     )}
-    <div style={{display:"flex",height:"100vh",overflow:"hidden"}} tabIndex={-1} onKeyDown={e=>{if(e.key==="Escape"){if(sel){setSel(null);setShowDraft(false);setCompose(null);}else if(compose){setCompose(null);}}}}>
+    <div style={{display:"flex",height:"100vh",overflow:"hidden"}} tabIndex={-1} onKeyDown={e=>{if(e.key==="Escape"){if(sel){const lc=document.querySelector(".lanes-scroll");const sx=lc?lc.scrollLeft:0;setSel(null);setShowDraft(false);setCompose(null);setTimeout(()=>{const l=document.querySelector(".lanes-scroll");if(l)l.scrollLeft=sx;},50);}else if(compose){setCompose(null);}}}}>
       {toast&&(
         <div style={{position:"fixed",top:16,right:16,zIndex:9999,animation:"fadein .2s ease",background:toast.type==="error"?"#fce8e6":"#e6f4ea",border:"1px solid "+(toast.type==="error"?"#f28b82":"#81c995"),color:toast.type==="error"?"#c5221f":"#137333",padding:"12px 20px",borderRadius:10,fontSize:13,fontWeight:500,boxShadow:"0 4px 16px rgba(0,0,0,.15)"}}>
           {toast.msg}
@@ -811,7 +811,7 @@ const approveDraft=async()=>{
         <div style={{flex:1,overflow:"hidden",display:"flex"}}>
           {/* Lanes view */}
           {view==="lanes"&&!sel&&(
-            <div style={{flex:1,overflowX:"auto",overflowY:"hidden",padding:"14px 16px"}}>
+            <div className="lanes-scroll" style={{flex:1,overflowX:"auto",overflowY:"hidden",padding:"14px 16px"}}>
               <div style={{display:"flex",gap:14,height:"100%",minWidth:"fit-content"}}>
                 {lanes.filter(lane=>!hiddenLanes.has(lane.id)).map(lane=>{
                   const lEmails=laneMap[lane.id]||[];
