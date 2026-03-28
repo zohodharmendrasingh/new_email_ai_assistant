@@ -1027,7 +1027,7 @@ const approveDraft=async()=>{
           <span style={{fontSize:12,fontWeight:500}}>{d.subject||"(no subject)"}</span>
           <span style={{fontSize:10,opacity:.5}}>{d.time?new Date(parseInt(d.time)).toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"}):""}</span>
         </div>
-        <div style={{fontSize:11,opacity:.6}}>To: {d.to||"—"}</div>
+        <div style={{fontSize:11,opacity:.6}}>To: {(d.to||"—").replace(/&quot;/g,"").replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/<[^>]+>/g,"").trim()||"—"}</div>
       </div>
     ))}
   </div>
