@@ -432,7 +432,13 @@ function App(){
     setLoadDraft(false);
   };
 
-  const sendAgent=async()=>{
+  const fetchDrafts=async()=>{
+  setLoadDrafts(true);
+  try{const r=await fetch(BASE+"/drafts");const d=await r.json();setDrafts(Array.isArray(d)?d:[]);}
+  catch(e){toast_("Failed to load drafts","error");}
+  setLoadDrafts(false);
+};
+const sendAgent=async()=>{
   const msg=agentInput.trim();if(!msg||agentBusy)return;
   setAgentInput("");setAgentBusy(true);
   setAgentMsgs(p=>[...p,{r:"u",t:msg}]);
