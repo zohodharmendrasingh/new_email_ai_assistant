@@ -1022,7 +1022,7 @@ const approveDraft=async()=>{
     {!loadDrafts&&drafts.length===0&&<div style={{opacity:.5,fontSize:13,textAlign:"center",marginTop:40}}>No drafts found</div>}
     {drafts.map(d=>(
       <div key={d.id} className="section-card" style={{borderRadius:10,padding:"10px 14px",marginBottom:8,cursor:"pointer"}}
-        onClick={()=>{setComposeTo(d.to||"");setComposeSubj(d.subject||"");setComposeBody(d.summary||"");setComposeMode("reply");setCompose("reply");setView("lanes");}}>
+        onClick={()=>{const dec=e=>(e||"").replace(/&quot;/g,"").replace(/&lt;/g,"").replace(/&gt;/g,"").replace(/<[^>]+>/g,"").trim();setComposeTo(dec(d.to));setComposeSubj(d.subject||"");setComposeBody(d.summary||"");setComposeCC("");setComposeMode("reply");setCompose("reply");setView("lanes");}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:3}}>
           <span style={{fontSize:12,fontWeight:500}}>{d.subject||"(no subject)"}</span>
           <span style={{fontSize:10,opacity:.5}}>{d.time?new Date(parseInt(d.time)).toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"}):""}</span>
