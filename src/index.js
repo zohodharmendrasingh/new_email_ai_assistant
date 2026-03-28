@@ -442,7 +442,7 @@ app.get("/drafts", async (req, res) => {
   const token = getBearerToken(req) || zohoAccessToken;
   const accountId = process.env.ZOHO_ACCOUNT_ID;
   try {
-    const r = await fetch(`https://mail.zoho.com/api/accounts/${accountId}/messages?folderId=4862555000000008015&limit=50`, {
+    const r = await fetch(`https://mail.zoho.com/api/accounts/${accountId}/messages/view?folderId=4862555000000008015&limit=50&sortorder=false`, {
       headers: { Authorization: "Zoho-oauthtoken " + token }
     });
     const d = await r.json();
