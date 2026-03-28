@@ -286,12 +286,12 @@ function App(){
     const cutoff={
       today:startOfDay(now),
       yesterday:startOfDay(new Date(now-86400000)),
-      "3days":startOfDay(new Date(now-2*86400000)),
-      "4days":startOfDay(new Date(now-3*86400000)),
-      "5days":startOfDay(new Date(now-4*86400000)),
-      week:startOfDay(new Date(now-6*86400000)),
+      "3days":startOfDay(new Date(now-3*86400000)),
+      "4days":startOfDay(new Date(now-4*86400000)),
+      "5days":startOfDay(new Date(now-5*86400000)),
+      week:startOfDay(new Date(now-7*86400000)),
     }[dateFilter]||startOfDay(now);
-    const endCutoff=dateFilter==="yesterday"?startOfDay(now):null;
+    const endCutoff=["yesterday","3days","4days","5days","week"].includes(dateFilter)?startOfDay(now):null;
     let base=emails.filter(e=>{
       if(deleted.has(e.id))return false;
       const t=new Date(parseInt(e.receivedTime||e.time||0));
