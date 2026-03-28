@@ -101,6 +101,7 @@ img[src=""], img:not([src]), img[src^="cid:"] { display: none !important; } img 
 <div id="root"></div>
 <script type="text/babel">
 const BASE="https://metwall-ai-assistant-production.up.railway.app";
+const APP_VERSION = "v1.3.0";
 function loadState(){try{const s=localStorage.getItem("metwall_v1");return s?JSON.parse(s):{}}catch{return {}}}
 function saveState(p){try{localStorage.setItem("metwall_v1",JSON.stringify({...loadState(),...p}));}catch{}}
 const _S=loadState();
