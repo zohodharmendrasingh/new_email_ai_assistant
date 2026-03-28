@@ -225,7 +225,7 @@ function App(){
   const [composeMode,setComposeMode]=React.useState("reply");
   const [composeTo,setComposeTo]=React.useState("");
   const [composeSubj,setComposeSubj]=React.useState("");
-  const [composeBody,setComposeBody]=React.useState("");const [agentOpen,setAgentOpen]=React.useState(false);const [agentMsgs,setAgentMsgs]=React.useState([{r:"a",t:"Hi Alfonso! Tell me what to do — move emails between lanes, organize by sender, anything. Try: Move all RFQ emails to Quotes"}]);const [agentInput,setAgentInput]=React.useState("");const [agentBusy,setAgentBusy]=React.useState(false);const [draftChat,setDraftChat]=React.useState([]);const [draftChatInput,setDraftChatInput]=React.useState("");const [draftChatBusy,setDraftChatBusy]=React.useState(false);
+  const [composeBody,setComposeBody]=React.useState("");const [drafts,setDrafts]=React.useState([]);const [loadDrafts,setLoadDrafts]=React.useState(false);const [agentOpen,setAgentOpen]=React.useState(false);const [agentMsgs,setAgentMsgs]=React.useState([{r:"a",t:"Hi Alfonso! Tell me what to do — move emails between lanes, organize by sender, anything. Try: Move all RFQ emails to Quotes"}]);const [agentInput,setAgentInput]=React.useState("");const [agentBusy,setAgentBusy]=React.useState(false);const [draftChat,setDraftChat]=React.useState([]);const [draftChatInput,setDraftChatInput]=React.useState("");const [draftChatBusy,setDraftChatBusy]=React.useState(false);
   const [sending,setSending]=React.useState(false);
   const [sidebarOpen,setSidebarOpen]=React.useState(false);
   const [showNewLane,setShowNewLane]=React.useState(false);
@@ -747,8 +747,7 @@ const approveDraft=async()=>{
               ➕ New Lane
             </button>
           </div>
-          <div style={{height:1,background:"rgba(128,128,128,.15)",margin:"4px 12px"}}/>
-          <div className={"nav-item"+(view==="teach"?" act":"")} onClick={()=>setView("teach")}><span>🧠</span><span style={{fontSize:12}}>Teach AI</span></div>
+          <div style={{height:1,background:"rgba(128,128,128,.15)",margin:"4px 12px"}}/><div className={"nav-item"+(view==="drafts"?" act":"")} onClick={()=>{setView("drafts");if(drafts.length===0)fetchDrafts();}}><span>📝</span><span style={{fontSize:12}}>Drafts</span>{drafts.length>0&&<span className="badge" style={{background:"#f29900",color:"#7a4a00",marginLeft:"auto"}}>{drafts.length}</span>}</div><div style={{height:1,background:"rgba(128,128,128,.15)",margin:"4px 12px"}}/><div className={"nav-item"+(view==="teach"?" act":"")} onClick={()=>setView("teach")}><span>🧠</span><span style={{fontSize:12}}>Teach AI</span></div>
           <div className={"nav-item"+(view==="rules"?" act":"")} onClick={()=>setView("rules")}><span>📋</span><span style={{fontSize:12}}>Lane Rules</span></div>
           <div className={"nav-item"+(view==="contacts"?" act":"")} onClick={()=>{setView("contacts");if(contacts.length===0)fetchContacts();}}><span>👤</span><span style={{fontSize:12}}>Contacts</span></div>
           <div className={"nav-item"+(view==="settings"?" act":"")} onClick={()=>setView("settings")}><span>⚙️</span><span style={{fontSize:12}}>Settings</span></div>
@@ -1007,7 +1006,27 @@ const approveDraft=async()=>{
           )}
 
           {/* Teach */}
-          {view==="teach"&&(
+          {view==="drafts"&&(
+  <div style={{flex:1,overflowY:"auto",padding:16}}>
+    <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:14}}>
+      <div style={{fontSize:15,fontWeight:600}}>📝 Drafts</div>
+      <button className="btn ghost" style={{fontSize:11,borderRadius:20}} onClick={fetchDrafts}>{loadDrafts?"Loading...":"↺ Refresh"}</button>
+    </div>
+    {loadDrafts&&<div style={{opacity:.5,fontSize:13,textAlign:"center",marginTop:40}}>Loading drafts...</div>}
+    {!loadDrafts&&drafts.length===0&&<div style={{opacity:.5,fontSize:13,textAlign:"center",marginTop:40}}>No drafts found</div>}
+    {drafts.map(d=>(
+      <div key={d.id} className="section-card" style={{borderRadius:10,padding:"10px 14px",marginBottom:8,cursor:"pointer"}}
+        onClick={()=>{setComposeTo(d.to||"");setComposeSubj(d.subject||"");setComposeBody(d.summary||"");setComposeMode("reply");setCompose("reply");setView("lanes");}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:3}}>
+          <span style={{fontSize:12,fontWeight:500}}>{d.subject||"(no subject)"}</span>
+          <span style={{fontSize:10,opacity:.5}}>{d.time?new Date(parseInt(d.time)).toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"}):""}</span>
+        </div>
+        <div style={{fontSize:11,opacity:.6}}>To: {d.to||"—"}</div>
+      </div>
+    ))}
+  </div>
+)}
+{view==="teach"&&(
             <div style={{flex:1,overflowY:"auto",padding:20}}>
               <div style={{maxWidth:620,margin:"0 auto"}}>
                 <h1 style={{fontSize:18,fontWeight:700,marginBottom:4}}>Teach Your AI</h1>

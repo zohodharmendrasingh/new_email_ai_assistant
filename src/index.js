@@ -438,6 +438,22 @@ app.post("/forward", async (req, res) => {
   }
 });
 
+app.get("/drafts", async (req, res) => {
+  const token = getBearerToken(req) || zohoAccessToken;
+  const accountId = process.env.ZOHO_ACCOUNT_ID;
+  try {
+    const r = await fetch(`https://mail.zoho.com/api/accounts/${accountId}/folders/4862555000000008015/messages?limit=50`, {
+      headers: { Authorization: "Zoho-oauthtoken " + token }
+    });
+    const d = await r.json();
+    const msgs = (d.data || []).map(m => ({
+      id: m.messageId, subject: m.subject, to: m.toAddress,
+      time: m.receivedTime, summary: m.summary, folderId: "4862555000000008015"
+    }));
+    res.json(msgs);
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
 app.listen(PORT, () => {
   console.log(`Email triage webhook running on http://localhost:${PORT}`);
   console.log(`POST /triage  { subject, body }`);
