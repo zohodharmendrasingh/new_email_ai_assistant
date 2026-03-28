@@ -404,6 +404,40 @@ Reply ONLY with valid JSON: {"draft":"the refined draft text here","message":"br
   } catch(e) { res.status(500).json({error:e.message,message:"Failed: "+e.message}); }
 });
 
+app.post("/reply", async (req, res) => {
+  const { fromAddress, toAddress, subject, content, messageId, folderId } = req.body;
+  const token = getBearerToken(req) || zohoAccessToken;
+  const accountId = process.env.ZOHO_ACCOUNT_ID;
+  try {
+    const data = await zohoPost(
+      `https://mail.zoho.com/api/accounts/${accountId}/messages`,
+      { fromAddress, toAddress, subject, content, mailFormat: "html", mode: "sendmail", inReplyTo: messageId },
+      token
+    );
+    res.json({ success: true, messageId: data?.data?.messageId });
+  } catch(e) {
+    console.error("Reply error:", e.message);
+    res.status(500).json({ error: e.message });
+  }
+});
+
+app.post("/forward", async (req, res) => {
+  const { fromAddress, toAddress, subject, content, messageId, folderId } = req.body;
+  const token = getBearerToken(req) || zohoAccessToken;
+  const accountId = process.env.ZOHO_ACCOUNT_ID;
+  try {
+    const data = await zohoPost(
+      `https://mail.zoho.com/api/accounts/${accountId}/messages`,
+      { fromAddress, toAddress, subject, content, mailFormat: "html", mode: "sendmail" },
+      token
+    );
+    res.json({ success: true, messageId: data?.data?.messageId });
+  } catch(e) {
+    console.error("Forward error:", e.message);
+    res.status(500).json({ error: e.message });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Email triage webhook running on http://localhost:${PORT}`);
   console.log(`POST /triage  { subject, body }`);
