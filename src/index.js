@@ -446,9 +446,10 @@ app.get("/drafts", async (req, res) => {
       headers: { Authorization: "Zoho-oauthtoken " + token }
     });
     const d = await r.json();
-    const msgs = (d.data || []).map(m => ({
+    const raw = Array.isArray(d.data) ? d.data : (d.data ? [d.data] : []);
+    const msgs = raw.map(m => ({
       id: m.messageId, subject: m.subject, to: m.toAddress,
-      time: m.receivedTime, summary: m.summary, folderId: "4862555000000008015"
+      time: m.receivedTime || m.sentDateInGMT, summary: m.summary || m.content || "", folderId: "4862555000000008015"
     }));
     res.json(msgs);
   } catch(e) { res.status(500).json({ error: e.message }); }
