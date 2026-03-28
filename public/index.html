@@ -223,7 +223,7 @@ function App(){
   const [confirmModal,setConfirmModal]=React.useState(null); // {msg, onOk}
   const [compose,setCompose]=React.useState(null);
   const [composeMode,setComposeMode]=React.useState("reply");
-  const [composeTo,setComposeTo]=React.useState("");
+  const [composeTo,setComposeTo]=React.useState("");const [composeCC,setComposeCC]=React.useState("");
   const [composeSubj,setComposeSubj]=React.useState("");
   const [composeBody,setComposeBody]=React.useState("");const [drafts,setDrafts]=React.useState([]);const [loadDrafts,setLoadDrafts]=React.useState(false);const [agentOpen,setAgentOpen]=React.useState(false);const [agentMsgs,setAgentMsgs]=React.useState([{r:"a",t:"Hi Alfonso! Tell me what to do — move emails between lanes, organize by sender, anything. Try: Move all RFQ emails to Quotes"}]);const [agentInput,setAgentInput]=React.useState("");const [agentBusy,setAgentBusy]=React.useState(false);const [draftChat,setDraftChat]=React.useState([]);const [draftChatInput,setDraftChatInput]=React.useState("");const [draftChatBusy,setDraftChatBusy]=React.useState(false);
   const [sending,setSending]=React.useState(false);
@@ -376,9 +376,9 @@ function App(){
 
   const openCompose=(mode)=>{
     setComposeMode(mode);
-    if(mode==="reply"){setComposeTo(sel?sel.from:"");setComposeSubj(sel?"RE: "+sel.subject:"");setComposeBody("");}
+    const decodeEmail=e=>(e||"").replace(/&quot;/g,"").replace(/&lt;/g,"").replace(/&gt;/g,"").replace(/<[^>]+>/g,"").trim();if(mode==="reply"){setComposeTo(sel?decodeEmail(sel.from):"");setComposeSubj(sel?"RE: "+sel.subject:"");setComposeBody("");}
     else{setComposeTo("");setComposeSubj(sel?"FW: "+sel.subject:"");setComposeBody(sel?"\n\n--- Forwarded ---\nFrom: "+sel.from+"\nSubject: "+sel.subject+"\n\n"+strip(emailBody||sel.summary).slice(0,300):"");}
-    setCompose(mode);
+    setComposeCC("");setCompose(mode);
   };
 
   const sendCompose=async()=>{
@@ -387,7 +387,7 @@ function App(){
     const html="<div>"+composeBody.replace(/\n/g,"<br>")+"<br><br><hr style='border:none;border-top:1px solid #eee;margin:16px 0'><strong>Alfonso Mendez</strong><br>President & CEO | Metwall<br>M (281) 827 3470 | www.metwall.com</div>";
     try{
       const endpoint=composeMode==="reply"?"/reply":"/forward";
-      const payload={fromAddress:"alfonso@metwall.com",toAddress:composeTo,subject:composeSubj,content:html};
+      const payload={fromAddress:"alfonso@metwall.com",toAddress:composeTo,ccAddress:composeCC||undefined,subject:composeSubj,content:html};
       if(sel){payload.messageId=sel.messageId||sel.id;payload.folderId=sel.folderId;}
       const r=await fetch(BASE+endpoint,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
       const d=await r.json();
@@ -695,7 +695,7 @@ const approveDraft=async()=>{
               <input value={composeTo} onChange={e=>setComposeTo(e.target.value)} style={{flex:1,border:"none",fontSize:13,background:"transparent",padding:"2px 0"}} placeholder="Recipients"/>
             </div>
             <div style={{padding:"8px 0",display:"flex",gap:8,alignItems:"center"}}>
-              <span style={{fontSize:11,opacity:.5,width:30,flexShrink:0}}>Sub</span>
+              <span style={{fontSize:11,opacity:.5,width:30,flexShrink:0}}>CC</span><input value={composeCC} onChange={e=>setComposeCC(e.target.value)} style={{flex:1,border:"none",fontSize:13,background:"transparent",padding:"2px 0"}} placeholder="CC"/></div><div style={{padding:"8px 0",display:"flex",gap:8,alignItems:"center"}}><span style={{fontSize:11,opacity:.5,width:30,flexShrink:0}}>Sub</span>
               <input value={composeSubj} onChange={e=>setComposeSubj(e.target.value)} style={{flex:1,border:"none",fontSize:13,background:"transparent",padding:"2px 0"}}/>
             </div>
           </div>
