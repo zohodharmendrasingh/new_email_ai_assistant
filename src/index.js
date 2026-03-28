@@ -448,8 +448,8 @@ app.get("/drafts", async (req, res) => {
     const d = await r.json();
     const raw = Array.isArray(d.data) ? d.data : (d.data ? [d.data] : []);
     const msgs = raw.map(m => ({
-      id: m.messageId, subject: m.subject, to: m.toAddress,
-      time: m.receivedTime || m.sentDateInGMT, summary: m.summary || "", folderId: "4862555000000008015"
+      id: m.messageId, subject: m.subject || "(no subject)", to: m.toAddress || m.toAddr || "",
+      time: m.sentDateInGMT || m.receivedTime, summary: m.summary || "", folderId: "4862555000000008015"
     }));
     res.json(msgs);
   } catch(e) { res.status(500).json({ error: e.message }); }
