@@ -186,6 +186,7 @@ function App(){
   const [overrides,setOverrides]=React.useState(()=>_S.overrides||{});
   const [rules,setRules]=React.useState(()=>_S.rules||[]);
   const [sel,setSel]=React.useState(null);
+  const [checkedIds,setCheckedIds]=React.useState(new Set());
   const scrollSaveRef=React.useRef(0);
   const [emailBody,setEmailBody]=React.useState(null);
   const [loadBody,setLoadBody]=React.useState(false);
@@ -410,6 +411,22 @@ function App(){
     }});
   };
 
+  const deleteChecked=async()=>{
+    if(!checkedIds.size)return;
+    setConfirmModal({msg:"Delete "+checkedIds.size+" email(s)?",onOk:async()=>{
+      const sx=scrollSaveRef.current;
+      const toDelete=[...checkedIds];
+      await Promise.all(toDelete.map(id=>{
+        const email=emails.find(e=>e.id===id);
+        if(!email)return;
+        return fetch(BASE+"/message/"+email.folderId+"/"+id,{method:"DELETE"}).catch(()=>{});
+      }));
+      setDeleted(prev=>new Set([...prev,...toDelete]));
+      setCheckedIds(new Set());
+      setTimeout(()=>{const l=document.querySelector(".lanes-scroll");if(l)l.scrollLeft=sx;},50);
+      toast_("🗑 Deleted "+toDelete.length+" email(s)");
+    }});
+  };
   const spamEmail=async()=>{
     if(!sel)return;
     setConfirmModal({msg:'Mark "'+sel.subject+'" as spam?',icon:"🚫",onOk:async()=>{
@@ -523,6 +540,7 @@ const approveDraft=async()=>{
         </div>
         
         <div style={{display:"flex",gap:10,alignItems:"flex-start",paddingRight:28}}>
+          <input type="checkbox" checked={checkedIds.has(email.id)} onChange={ev=>{ev.stopPropagation();setCheckedIds(prev=>{const s=new Set(prev);s.has(email.id)?s.delete(email.id):s.add(email.id);return s;});}} onClick={ev=>ev.stopPropagation()} style={{marginTop:4,flexShrink:0,cursor:"pointer",accentColor:"#1a73e8",width:14,height:14}}/>
           <div style={{position:"relative",flexShrink:0}}>
             <Av name={email.sender||email.from} email={email.from} size={34}/>
             {!isRead&&<div style={{position:"absolute",bottom:0,right:0,width:9,height:9,borderRadius:"50%",background:"#1a73e8",border:"2px solid white"}}></div>}
@@ -820,6 +838,13 @@ const approveDraft=async()=>{
         <div style={{flex:1,overflow:"hidden",display:"flex"}}>
           {/* Lanes view */}
           {view==="lanes"&&!sel&&(
+            {checkedIds.size>0&&(
+              <div style={{display:"flex",alignItems:"center",gap:10,padding:"6px 16px",background:"#e8f0fe",borderBottom:"1px solid #c5d8fc",flexShrink:0}}>
+                <span style={{fontSize:12,fontWeight:600,color:"#1a73e8"}}>{checkedIds.size} selected</span>
+                <button className="btn red" style={{fontSize:11,borderRadius:20,padding:"4px 14px"}} onClick={deleteChecked}>🗑 Delete Selected</button>
+                <button className="btn ghost" style={{fontSize:11,borderRadius:20,padding:"4px 14px"}} onClick={()=>setCheckedIds(new Set())}>✕ Clear</button>
+              </div>
+            )}
             <div className="lanes-scroll" style={{flex:1,overflowX:"auto",overflowY:"hidden",padding:"14px 16px"}}>
               <div style={{display:"flex",gap:14,height:"100%",minWidth:"fit-content"}}>
                 {lanes.filter(lane=>!hiddenLanes.has(lane.id)).map(lane=>{
