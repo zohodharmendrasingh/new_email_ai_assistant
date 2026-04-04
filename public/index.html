@@ -379,7 +379,7 @@ function App(){
 
   const openCompose=(mode)=>{
     setComposeMode(mode);
-    const decodeEmail=e=>(e||"").replace(/&quot;/g,"").replace(/&lt;/g,"").replace(/&gt;/g,"").replace(/<[^>]+>/g,"").trim();if(mode==="reply"){setComposeTo(sel?decodeEmail(sel.from):"");setComposeSubj(sel?"RE: "+sel.subject:"");setComposeBody("");}
+    const decodeEmail=e=>(e||"").replace(/&quot;/g,"").replace(/&lt;/g,"").replace(/&gt;/g,"").replace(/<[^>]+>/g,"").trim();if(mode==="reply"){setComposeTo(sel?decodeEmail(sel.from):"");setComposeSubj(sel?"RE: "+sel.subject:"");const quoted=sel?"\n\n\n--- Original Message ---\nFrom: "+sel.from+"\nDate: "+new Date(sel.receivedTime).toLocaleString()+"\nSubject: "+sel.subject+"\n\n"+strip(emailBody||sel.summary).slice(0,600):"";setComposeBody("\n\n--\nAlfonso Mendez\nPresident & CEO | Metwall\nM (281) 827 3470 | D (346) 406 1330\nwww.metwall.com"+quoted);}
     else{setComposeTo("");setComposeSubj(sel?"FW: "+sel.subject:"");setComposeBody(sel?"\n\n--- Forwarded ---\nFrom: "+sel.from+"\nSubject: "+sel.subject+"\n\n"+strip(emailBody||sel.summary).slice(0,300):"");}
     setComposeCC("");setCompose(mode);
   };
