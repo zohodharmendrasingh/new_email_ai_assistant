@@ -827,10 +827,11 @@ const approveDraft=async()=>{
           <div style={{display:"flex",background:"transparent",borderRadius:6,padding:0,gap:4,flexShrink:0}}>
             {[["all","All"],["unread","Unread"]].map(([val,label])=>(
               <button key={val} onClick={()=>setUnreadFilter(val)}
-                style={{fontSize:11,fontWeight:600,padding:"4px 12px",borderRadius:18,border:"none",cursor:"pointer",
-                  background:unreadFilter===val?"#1a73e8":"transparent",
+                style={{fontSize:11,fontWeight:600,padding:"5px 12px",borderRadius:6,border:"1.5px solid",cursor:"pointer",
+                  background:unreadFilter===val?"#286efa":"transparent",
                   color:unreadFilter===val?"white":"inherit",
-                  transition:"all .15s"}}>
+                  borderColor:unreadFilter===val?"#286efa":"rgba(128,128,128,.3)",
+                  opacity:unreadFilter===val?1:.7,transition:"all .15s"}}>
                 {label}
               </button>
             ))}
