@@ -835,17 +835,17 @@ const approveDraft=async()=>{
           </div>
         </div>
 
-        <div style={{flex:1,overflow:"hidden",display:"flex"}}>
+        <div style={{flex:1,overflow:"hidden",display:"flex",flexDirection:"column"}}>
+          {checkedIds.size>0&&(
+            <div style={{display:"flex",alignItems:"center",gap:10,padding:"6px 16px",background:"#e8f0fe",borderBottom:"1px solid #c5d8fc",flexShrink:0}}>
+              <span style={{fontSize:12,fontWeight:600,color:"#1a73e8"}}>{checkedIds.size} selected</span>
+              <button className="btn red" style={{fontSize:11,borderRadius:20,padding:"4px 14px"}} onClick={deleteChecked}>🗑 Delete Selected</button>
+              <button className="btn ghost" style={{fontSize:11,borderRadius:20,padding:"4px 14px"}} onClick={()=>setCheckedIds(new Set())}>✕ Clear</button>
+            </div>
+          )}
           {/* Lanes view */}
           {view==="lanes"&&!sel&&(
             <React.Fragment>
-            {checkedIds.size>0&&(
-              <div style={{display:"flex",alignItems:"center",gap:10,padding:"6px 16px",background:"#e8f0fe",borderBottom:"1px solid #c5d8fc",flexShrink:0}}>
-                <span style={{fontSize:12,fontWeight:600,color:"#1a73e8"}}>{checkedIds.size} selected</span>
-                <button className="btn red" style={{fontSize:11,borderRadius:20,padding:"4px 14px"}} onClick={deleteChecked}>🗑 Delete Selected</button>
-                <button className="btn ghost" style={{fontSize:11,borderRadius:20,padding:"4px 14px"}} onClick={()=>setCheckedIds(new Set())}>✕ Clear</button>
-              </div>
-            )}
             <div className="lanes-scroll" style={{flex:1,overflowX:"auto",overflowY:"hidden",padding:"14px 16px"}}>
               <div style={{display:"flex",gap:14,height:"100%",minWidth:"fit-content"}}>
                 {lanes.filter(lane=>!hiddenLanes.has(lane.id)).map(lane=>{
