@@ -379,7 +379,7 @@ function App(){
 
   const openCompose=(mode)=>{
     setComposeMode(mode);
-    const decodeEmail=e=>(e||"").replace(/&quot;/g,"").replace(/&lt;/g,"").replace(/&gt;/g,"").replace(/<[^>]+>/g,"").trim();const bodyText=strip(emailBody||sel&&sel.summary||"").slice(0,1200);const quotedBlock=sel?"\n\n\n--- Original Message ---\nFrom: "+sel.from+"\nDate: "+new Date(sel.receivedTime).toLocaleString()+"\nSubject: "+sel.subject+"\n\n"+bodyText:"";const sig="\n\n--\nAlfonso Mendez\nPresident & CEO | Metwall\nM (281) 827 3470 | D (346) 406 1330\nwww.metwall.com";if(mode==="reply"){setComposeTo(sel?decodeEmail(sel.from):"");setComposeCC("");setComposeSubj(sel?"RE: "+sel.subject:"");setComposeBody(sig+quotedBlock);}else if(mode==="replyall"){setComposeTo(sel?decodeEmail(sel.from):"");const others=(sel.toAddress||"")+" "+(sel.ccAddress||"");const ccList=[...new Set(others.split(/[,;\s]+/).map(e=>e.trim()).filter(e=>e&&e.includes("@")&&e!=="alfonso@metwall.com"))].join(", ");setComposeCC(ccList);setComposeSubj(sel?"RE: "+sel.subject:"");setComposeBody(sig+quotedBlock);}
+    const decodeEmail=e=>(e||"").replace(/&quot;/g,"").replace(/&lt;/g,"").replace(/&gt;/g,"").replace(/<[^>]+>/g,"").trim();const bodyText=strip(emailBody||sel&&sel.summary||"").slice(0,1200);const quotedBlock=sel?"\n\n\n--- Original Message ---\nFrom: "+sel.from+"\nDate: "+new Date(sel.receivedTime).toLocaleString()+"\nSubject: "+sel.subject+"\n\n"+bodyText:"";const sig="\n\n--\nAlfonso Mendez\nPresident & CEO | Metwall\nM (281) 827 3470 | D (346) 406 1330\nwww.metwall.com";if(mode==="reply"){setComposeTo(sel?decodeEmail(sel.from):"");setComposeCC("");setComposeSubj(sel?"RE: "+sel.subject:"");setComposeBody(sig);}else if(mode==="replyall"){setComposeTo(sel?decodeEmail(sel.from):"");const others=(sel.toAddress||"")+" "+(sel.ccAddress||"");const ccList=[...new Set(others.split(/[,;\s]+/).map(e=>e.trim()).filter(e=>e&&e.includes("@")&&e!=="alfonso@metwall.com"))].join(", ");setComposeCC(ccList);setComposeSubj(sel?"RE: "+sel.subject:"");setComposeBody(sig);}
     else{setComposeTo("");setComposeSubj(sel?"FW: "+sel.subject:"");setComposeBody(sel?"\n\n--- Forwarded ---\nFrom: "+sel.from+"\nSubject: "+sel.subject+"\n\n"+strip(emailBody||sel.summary).slice(0,300):"");}
     setComposeCC("");setCompose(mode);
   };
@@ -721,9 +721,19 @@ const approveDraft=async()=>{
               <input value={composeSubj} onChange={e=>setComposeSubj(e.target.value)} style={{flex:1,border:"none",fontSize:13,background:"transparent",padding:"2px 0"}}/>
             </div>
           </div>
-          <textarea value={composeBody} onChange={e=>setComposeBody(e.target.value)}
-            style={{border:"none",padding:"12px 16px",fontSize:13,lineHeight:1.7,resize:"none",flex:1,background:"transparent",outline:"none"}}
-            placeholder="Write your message..."/>
+          <div style={{flex:1,display:"flex",flexDirection:"column",overflow:"hidden"}}>
+            <textarea value={composeBody} onChange={e=>setComposeBody(e.target.value)}
+              style={{border:"none",padding:"12px 16px",fontSize:13,lineHeight:1.7,resize:"none",minHeight:160,background:"transparent",outline:"none",flexShrink:0}}
+              placeholder="Write your message..."/>
+            {emailBody&&(
+              <div style={{borderTop:"2px solid #e0e0e0",flex:1,overflow:"auto",background:"#fafafa"}}>
+                <div style={{padding:"8px 16px",fontSize:11,color:"#888",borderBottom:"1px solid #eee"}}>
+                  ── Original Message ──
+                </div>
+                <iframe srcDoc={emailBody} style={{width:"100%",border:"none",minHeight:300,display:"block"}} sandbox="allow-same-origin"/>
+              </div>
+            )}
+          </div>
           <div style={{padding:"10px 16px",borderTop:"1px solid rgba(128,128,128,.1)",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
             <span style={{fontSize:11,opacity:.45}}>From: alfonso@metwall.com</span>
             <button className="btn blue" onClick={sendCompose} disabled={sending} style={{padding:"8px 20px",borderRadius:20}}>
