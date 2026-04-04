@@ -737,7 +737,7 @@ const approveDraft=async()=>{
           <div style={{padding:"10px 16px",borderTop:"1px solid rgba(128,128,128,.1)",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
             <span style={{fontSize:11,opacity:.45}}>From: alfonso@metwall.com</span>
             <button className="btn blue" onClick={sendCompose} disabled={sending} style={{padding:"8px 20px",borderRadius:20}}>
-              {sending?"Sending...":composeMode==="reply"?"Send Reply":"Forward"}
+              {sending?"Sending...":composeMode==="reply"?"Send Reply":composeMode==="replyall"?"Send Reply All":"Forward"}
             </button>
           </div>
         </div>
