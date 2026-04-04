@@ -379,7 +379,7 @@ function App(){
 
   const openCompose=(mode)=>{
     setComposeMode(mode);
-    const decodeEmail=e=>(e||"").replace(/&quot;/g,"").replace(/&lt;/g,"").replace(/&gt;/g,"").replace(/<[^>]+>/g,"").trim();if(mode==="reply"){setComposeTo(sel?decodeEmail(sel.from):"");setComposeSubj(sel?"RE: "+sel.subject:"");const quoted=sel?"\n\n\n--- Original Message ---\nFrom: "+sel.from+"\nDate: "+new Date(sel.receivedTime).toLocaleString()+"\nSubject: "+sel.subject+"\n\n"+strip(emailBody||sel.summary).slice(0,600):"";setComposeBody("\n\n--\nAlfonso Mendez\nPresident & CEO | Metwall\nM (281) 827 3470 | D (346) 406 1330\nwww.metwall.com"+quoted);}
+    const decodeEmail=e=>(e||"").replace(/&quot;/g,"").replace(/&lt;/g,"").replace(/&gt;/g,"").replace(/<[^>]+>/g,"").trim();const bodyText=strip(emailBody||sel&&sel.summary||"").slice(0,1200);const quotedBlock=sel?"\n\n\n--- Original Message ---\nFrom: "+sel.from+"\nDate: "+new Date(sel.receivedTime).toLocaleString()+"\nSubject: "+sel.subject+"\n\n"+bodyText:"";const sig="\n\n--\nAlfonso Mendez\nPresident & CEO | Metwall\nM (281) 827 3470 | D (346) 406 1330\nwww.metwall.com";if(mode==="reply"){setComposeTo(sel?decodeEmail(sel.from):"");setComposeCC("");setComposeSubj(sel?"RE: "+sel.subject:"");setComposeBody(sig+quotedBlock);}else if(mode==="replyall"){setComposeTo(sel?decodeEmail(sel.from):"");const others=(sel.toAddress||"")+" "+(sel.ccAddress||"");const ccList=[...new Set(others.split(/[,;\s]+/).map(e=>e.trim()).filter(e=>e&&e.includes("@")&&e!=="alfonso@metwall.com"))].join(", ");setComposeCC(ccList);setComposeSubj(sel?"RE: "+sel.subject:"");setComposeBody(sig+quotedBlock);}
     else{setComposeTo("");setComposeSubj(sel?"FW: "+sel.subject:"");setComposeBody(sel?"\n\n--- Forwarded ---\nFrom: "+sel.from+"\nSubject: "+sel.subject+"\n\n"+strip(emailBody||sel.summary).slice(0,300):"");}
     setComposeCC("");setCompose(mode);
   };
@@ -708,7 +708,7 @@ const approveDraft=async()=>{
         <div className="modal-overlay" onClick={()=>setCompose(null)}>
         <div className="compose-win" style={{animation:"fadein .2s ease"}} onClick={e=>e.stopPropagation()}>
           <div style={{padding:"11px 16px",background:"#404040",borderRadius:"14px 14px 0 0",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-            <span style={{color:"white",fontSize:13,fontWeight:600}}>{composeMode==="reply"?"↩ Reply":"↪ Forward"}</span>
+            <span style={{color:"white",fontSize:13,fontWeight:600}}>{composeMode==="reply"?"↩ Reply":composeMode==="replyall"?"↩ Reply All":"↪ Forward"}</span>
             <button onClick={()=>setCompose(null)} style={{background:"none",border:"none",color:"#ccc",cursor:"pointer",fontSize:20}}>×</button>
           </div>
           <div style={{padding:"0 16px",borderBottom:"1px solid rgba(128,128,128,.15)"}}>
@@ -949,6 +949,7 @@ const approveDraft=async()=>{
                 <div className="detail-bg" style={{flex:1,overflowY:"auto",padding:16}}>
                   <div style={{display:"flex",gap:6,marginBottom:14,flexWrap:"wrap"}}>
                     <button className="btn blue" style={{fontSize:11,borderRadius:20,padding:"5px 12px"}} onClick={()=>openCompose("reply")}>↩ Reply</button>
+                    <button className="btn ghost" style={{fontSize:11,borderRadius:20,padding:"5px 12px"}} onClick={()=>openCompose("replyall")}>↩ Reply All</button>
                     <button className="btn ghost" style={{fontSize:11,borderRadius:20,padding:"5px 12px"}} onClick={()=>openCompose("forward")}>↪ Forward</button>
                     <button className="btn ghost" style={{fontSize:11,borderRadius:20,padding:"5px 12px"}} onClick={()=>{const wasRead=readIds.has(sel.id);toggleRead(sel.id,sel);toast_(readIds.has(sel.id)?"Marked unread":"Marked read");}}>
                       {readIds.has(sel.id)?"○ Unread":"● Read"}
