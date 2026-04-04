@@ -403,8 +403,8 @@ function App(){
     setConfirmModal({msg:'Delete "'+sel.subject+'"?',onOk:async()=>{
       try{
         await fetch(BASE+"/message/"+sel.folderId+"/"+sel.id,{method:"DELETE"});
-        const _lx=document.querySelector(".lanes-scroll");const sx=_lx?_lx.scrollLeft:0;setDeleted(new Set([...deleted,sel.id]));setSel(null);setEmailBody(null);
-        setTimeout(()=>{const l=document.querySelector(".lanes-scroll");if(l)l.scrollLeft=sx;},80);
+        const sx=scrollSaveRef.current;setDeleted(new Set([...deleted,sel.id]));setSel(null);setEmailBody(null);
+        setTimeout(()=>{const l=document.querySelector(".lanes-scroll");if(l)l.scrollLeft=sx;},50);
         toast_("🗑 Deleted");
       }catch{toast_("Failed to delete","error");}
     }});
