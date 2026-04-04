@@ -55,7 +55,7 @@ body.dark .nav-item.act{background:#1a2a3a;color:#7ab3ff}
 body.dark .section-card{background:#1e1e1e;box-shadow:0 1px 3px rgba(0,0,0,.4)}
 body.dark .compose-win{background:#1e1e1e;border-color:#333}
 body.dark .move-dd{background:#1e1e1e!important;border-color:#333;opacity:1!important}
-body.dark .ghost{border-color:#444!important;color:#aaa}
+body.dark .ghost{border-color:#666!important;color:#ccc}
 body.dark .ghost:hover{background:#252525}
 body.dark .search-bar{background:#252525;border-color:transparent;color:#e8e3d9}
 body.dark .search-bar:focus{background:#2a2a2a;border-color:#1a73e8}
@@ -830,8 +830,8 @@ const approveDraft=async()=>{
                 style={{fontSize:11,fontWeight:600,padding:"5px 12px",borderRadius:6,border:"1.5px solid",cursor:"pointer",
                   background:unreadFilter===val?"#286efa":"transparent",
                   color:unreadFilter===val?"white":"inherit",
-                  borderColor:unreadFilter===val?"#286efa":"rgba(128,128,128,.3)",
-                  opacity:unreadFilter===val?1:.7,transition:"all .15s"}}>
+                  borderColor:unreadFilter===val?"#286efa":"rgba(180,180,180,.5)",
+                  opacity:1,transition:"all .15s"}}>
                 {label}
               </button>
             ))}
@@ -843,8 +843,8 @@ const approveDraft=async()=>{
                 style={{fontSize:11,fontWeight:600,padding:"5px 12px",borderRadius:6,border:"1.5px solid",cursor:"pointer",
                   background:dateFilter===val?"#1a73e8":"transparent",
                   color:dateFilter===val?"white":undefined,
-                  borderColor:dateFilter===val?"#1a73e8":"rgba(128,128,128,.3)",
-                  opacity:dateFilter===val?1:.7,transition:"all .15s"}}>
+                  borderColor:dateFilter===val?"#286efa":"rgba(180,180,180,.5)",
+                  opacity:dateFilter===val?1:1,transition:"all .15s"}}>
                 {label}
               </button>
             ))}
@@ -890,7 +890,7 @@ const approveDraft=async()=>{
                             {lane.label}
                             {uc>0&&<span className="badge" style={{background:lane.color,color:"white",fontSize:9}}>{uc}</span>}
                           </div>
-                          <div style={{fontSize:10,fontWeight:400,opacity:.7}}>{lEmails.length} emails</div>
+                          <div style={{fontSize:10,fontWeight:600,opacity:1}}>{lEmails.length} emails</div>
                         </div>
                         <div style={{display:"flex",gap:3}}>
                           <button onClick={e=>{e.stopPropagation();toggleHideLane(lane.id);}} style={{background:"none",border:"none",cursor:"pointer",fontSize:11,padding:"2px 4px",opacity:.4}} title="Hide">🙈</button>
