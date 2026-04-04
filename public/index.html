@@ -187,6 +187,7 @@ function App(){
   const [rules,setRules]=React.useState(()=>_S.rules||[]);
   const [sel,setSel]=React.useState(null);
   const [checkedIds,setCheckedIds]=React.useState(new Set());
+  const [cardExpanded,setCardExpanded]=React.useState(false);
   const scrollSaveRef=React.useRef(0);
   const [emailBody,setEmailBody]=React.useState(null);
   const [loadBody,setLoadBody]=React.useState(false);
@@ -553,7 +554,7 @@ const approveDraft=async()=>{
               </span>
               <span style={{fontSize:10,opacity:.5,flexShrink:0,marginLeft:4}}>{fmtTime(email.receivedTime)}</span>
             </div>
-            <div style={{fontSize:11,fontWeight:isRead?400:600,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",marginBottom:2}}>{email.subject}</div>
+            <div style={{fontSize:cardExpanded?13:11,fontWeight:isRead?400:600,overflow:"hidden",textOverflow:cardExpanded?"clip":"ellipsis",whiteSpace:cardExpanded?"normal":"nowrap",marginBottom:2,lineHeight:1.4}}>{email.subject}</div>
             {toClean&&toClean!=="Not Provided"&&(
               <div style={{fontSize:10,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",marginBottom:1,opacity:.6}}>
                 <span style={{fontWeight:600}}>To: </span>{toClean.slice(0,50)}
@@ -564,7 +565,7 @@ const approveDraft=async()=>{
                 <span style={{fontWeight:600}}>CC: </span>{ccClean.slice(0,50)}
               </div>
             )}
-            <div style={{fontSize:11,opacity:.55,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",marginBottom:4}}>{strip(email.summary).slice(0,55)}</div>
+            <div style={{fontSize:cardExpanded?12:11,opacity:.55,overflow:"hidden",textOverflow:cardExpanded?"clip":"ellipsis",whiteSpace:cardExpanded?"normal":"nowrap",marginBottom:4,lineHeight:1.5,display:"-webkit-box",WebkitLineClamp:cardExpanded?4:1,WebkitBoxOrient:"vertical"}}>{strip(email.summary).slice(0,cardExpanded?300:55)}</div>
             <div style={{display:"flex",gap:3,flexWrap:"wrap",alignItems:"center"}}>
               {emailFlags[email.id]&&<span>{FLAGS.find(f=>f.id===emailFlags[email.id])?.emoji}</span>}
               {isUrgent&&<span className="tag" style={{background:"#fce8e6",color:"#c5221f"}}>🔴 Urgent</span>}
@@ -832,6 +833,7 @@ const approveDraft=async()=>{
           <div style={{display:"flex",gap:6,alignItems:"center",flexShrink:0}}>
             {search&&<span style={{fontSize:11,opacity:.5}}>{filteredEmails.length} results</span>}
             {sel&&<button className="btn ghost" style={{fontSize:11,borderRadius:20}} onClick={()=>{setSel(null);setShowDraft(false);setCompose(null);}}>← Lanes</button>}
+            <button className="btn ghost" style={{fontSize:11,borderRadius:20,padding:"4px 10px"}} onClick={()=>setCardExpanded(p=>!p)} title="Toggle card size">{cardExpanded?"⊟ Compact":"⊞ Expand"}</button>
           </div>
         </div>
 
