@@ -838,6 +838,7 @@ const approveDraft=async()=>{
         <div style={{flex:1,overflow:"hidden",display:"flex"}}>
           {/* Lanes view */}
           {view==="lanes"&&!sel&&(
+            <React.Fragment>
             {checkedIds.size>0&&(
               <div style={{display:"flex",alignItems:"center",gap:10,padding:"6px 16px",background:"#e8f0fe",borderBottom:"1px solid #c5d8fc",flexShrink:0}}>
                 <span style={{fontSize:12,fontWeight:600,color:"#1a73e8"}}>{checkedIds.size} selected</span>
