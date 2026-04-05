@@ -32,7 +32,7 @@ Respond ONLY with valid JSON, no code blocks:
 }`;
 
 app.post("/triage", async (req, res) => {
-  const { subject, body, from: sender } = req.body;
+  const { subject, body, from: sender, personality } = req.body;
   // Detect automated emails
   const autoSenders = ["noreply","no-reply","notification","notifications","mailer","alerts","newsletter","marketing","feedback@service","zoho-","donotreply","auto-confirm"];
   const isAuto = autoSenders.some(k => (sender||"").toLowerCase().includes(k));
@@ -49,7 +49,7 @@ app.post("/triage", async (req, res) => {
       model: "claude-opus-4-6",
       max_tokens: 1024,
       thinking: { type: "adaptive" },
-      system: SYSTEM_PROMPT,
+      system: personality ? personality + "\n\n" + SYSTEM_PROMPT : SYSTEM_PROMPT,
       messages: [{ role: "user", content: userMessage }],
     });
 
