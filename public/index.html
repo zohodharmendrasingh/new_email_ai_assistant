@@ -1083,7 +1083,7 @@ const approveDraft=async()=>{
                           style={{padding:"5px 16px",borderRadius:6,border:"1.5px solid "+(s==="yes"?"#0f9d58":s==="maybe"?"#f29900":"#ea4335"),
                             background:rsvpStatus===s?(s==="yes"?"#0f9d58":s==="maybe"?"#f29900":"#ea4335"):"transparent",
                             color:rsvpStatus===s?"white":(s==="yes"?"#0f9d58":s==="maybe"?"#f29900":"#ea4335"),
-                            fontWeight:600,fontSize:12,cursor:rsvpStatus||rsvpBusy?"default":"pointer",opacity:rsvpStatus&&rsvpStatus!==s?.4:1,transition:"all .15s"}}>
+                            fontWeight:600,fontSize:12,cursor:rsvpStatus||rsvpBusy?"default":"pointer",opacity:(rsvpStatus&&rsvpStatus!==s)?0.4:1,transition:"all .15s"}}>
                           {rsvpBusy===s?"...":s==="yes"?"👍 Yes":s==="maybe"?"🤔 Maybe":"👎 No"}
                         </button>
                       ))}
