@@ -262,6 +262,7 @@ function App(){
   const [emailFlags,setEmailFlags]=React.useState(()=>_S.emailFlags||{}); // emailId -> flagId
   const [flagMenu,setFlagMenu]=React.useState(null); // emailId
   const [contacts,setContacts]=React.useState([]);
+  const [rsvpLinks,setRsvpLinks]=React.useState(null);const [rsvpStatus,setRsvpStatus]=React.useState(null);const [rsvpBusy,setRsvpBusy]=React.useState(false);
   const [loadContacts,setLoadContacts]=React.useState(false);
   const [contactSearch,setContactSearch]=React.useState("");
 
@@ -301,7 +302,39 @@ function App(){
     setLoadContacts(false);
   };
 
-  const getLane=e=>overrides[e.id]||classify(e,lanes,rules);
+  
+  React.useEffect(()=>{
+    if(!emailBody){setRsvpLinks(null);setRsvpStatus(null);return;}
+    try{
+      const parser=new DOMParser();
+      const doc=parser.parseFromString(emailBody,"text/html");
+      const anchors=Array.from(doc.querySelectorAll("a"));
+      const found={};
+      anchors.forEach(a=>{
+        const href=a.getAttribute("href")||"";
+        const txt=(a.textContent||"").trim().toLowerCase();
+        if(!href.includes("zoho.com"))return;
+        if(txt==="yes"||href.includes("st=yes")||href.includes("status=yes")||href.includes("attendance=yes"))found.yes=href;
+        else if(txt==="maybe"||href.includes("st=maybe")||href.includes("status=maybe")||href.includes("attendance=maybe"))found.maybe=href;
+        else if(txt==="no"||href.includes("st=no")||href.includes("status=no")||href.includes("attendance=no"))found.no=href;
+      });
+      setRsvpLinks(Object.keys(found).length>=2?found:null);
+    }catch(ex){setRsvpLinks(null);}
+    setRsvpStatus(null);
+  },[emailBody]);
+
+  const sendRsvp=async(status)=>{
+    if(!rsvpLinks||!rsvpLinks[status])return;
+    setRsvpBusy(status);
+    try{
+      await fetch(BASE+"/rsvp",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({rsvpUrl:rsvpLinks[status]})});
+      setRsvpStatus(status);
+      toast_("✅ RSVP sent: "+status.charAt(0).toUpperCase()+status.slice(1));
+    }catch(ex){toast_("RSVP failed","error");}
+    setRsvpBusy(null);
+  };
+
+const getLane=e=>overrides[e.id]||classify(e,lanes,rules);
 
   const filteredEmails=React.useMemo(()=>{
     const now=new Date();
@@ -1041,7 +1074,23 @@ const approveDraft=async()=>{
                   </div>
 
                   <div className="section-card" style={{borderRadius:10,marginBottom:14,overflow:"hidden"}}>
-                    {loadBody
+                    {rsvpLinks&&(
+                    <div style={{padding:"12px 16px",background:"#e8f0fe",borderBottom:"1px solid #c5d8fc",display:"flex",alignItems:"center",gap:10,flexWrap:"wrap"}}>
+                      <span style={{fontSize:12,fontWeight:600,color:"#1a56db",marginRight:4}}>📅 Confirm your participation:</span>
+                      {["yes","maybe","no"].map(s=>(
+                        <button key={s} onClick={()=>!rsvpBusy&&!rsvpStatus&&sendRsvp(s)}
+                          disabled={!!rsvpBusy||!!rsvpStatus}
+                          style={{padding:"5px 16px",borderRadius:6,border:"1.5px solid "+(s==="yes"?"#0f9d58":s==="maybe"?"#f29900":"#ea4335"),
+                            background:rsvpStatus===s?(s==="yes"?"#0f9d58":s==="maybe"?"#f29900":"#ea4335"):"transparent",
+                            color:rsvpStatus===s?"white":(s==="yes"?"#0f9d58":s==="maybe"?"#f29900":"#ea4335"),
+                            fontWeight:600,fontSize:12,cursor:rsvpStatus||rsvpBusy?"default":"pointer",opacity:rsvpStatus&&rsvpStatus!==s?.4:1,transition:"all .15s"}}>
+                          {rsvpBusy===s?"...":s==="yes"?"👍 Yes":s==="maybe"?"🤔 Maybe":"👎 No"}
+                        </button>
+                      ))}
+                      {rsvpStatus&&<span style={{fontSize:11,color:"#137333",fontWeight:500}}>✓ Sent</span>}
+                    </div>
+                  )}
+                  {loadBody
                       ?<div style={{padding:20,textAlign:"center",opacity:.5,fontSize:13}}>Loading...</div>
                       :emailBody
                         ?(emailBody.trim().startsWith("<")

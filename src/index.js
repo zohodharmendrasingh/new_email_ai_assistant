@@ -221,6 +221,25 @@ async function zohoPost(url, payload, token, retried = false) {
   return res.json();
 }
 
+
+app.post("/rsvp", async (req, res) => {
+  const { rsvpUrl } = req.body;
+  if (!rsvpUrl) return res.status(400).json({ error: "Missing rsvpUrl" });
+  try {
+    await refreshZohoToken();
+    const r = await fetch(rsvpUrl, {
+      headers: { Authorization: `Zoho-oauthtoken ${zohoAccessToken}` }
+    });
+    if (r.ok) return res.json({ ok: true });
+    // Fallback: try without auth (embedded token in URL)
+    const r2 = await fetch(rsvpUrl);
+    return res.json({ ok: r2.ok, status: r2.status });
+  } catch(err) {
+    console.error("RSVP error:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 app.get("/inbox", async (req, res) => {
   const token = getBearerToken(req);
   const accountId = getAccountId(req);
