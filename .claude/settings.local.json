@@ -4,7 +4,8 @@
       "Bash(npm install:*)",
       "Bash(git add:*)",
       "Bash(railway status:*)",
-      "Bash(railway up:*)"
+      "Bash(railway up:*)",
+      "Bash(claude login:*)"
     ]
   },
   "enableAllProjectMcpServers": true,

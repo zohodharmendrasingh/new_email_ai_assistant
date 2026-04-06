@@ -194,6 +194,7 @@ function App(){
   const [sel,setSel]=React.useState(null);
   const [checkedIds,setCheckedIds]=React.useState(new Set());
   const [cardExpanded,setCardExpanded]=React.useState(false);
+  const [sigImage,setSigImage]=React.useState(localStorage.getItem("sigImage")||"");
   const [aiPersonality,setAiPersonality]=React.useState(localStorage.getItem("aiPersonality")||"You are Alfonso Mendez, President & CEO of Metwall, a glass wall systems company. Write concise, professional replies. Match the language of the sender (English or Spanish). Be direct and solution-focused.");
   const scrollSaveRef=React.useRef(0);
   const [emailBody,setEmailBody]=React.useState(null);
@@ -386,7 +387,7 @@ function App(){
 
   const openCompose=(mode)=>{
     setComposeMode(mode);
-    const decodeEmail=e=>(e||"").replace(/&quot;/g,"").replace(/&lt;/g,"").replace(/&gt;/g,"").replace(/<[^>]+>/g,"").trim();const bodyText=strip(emailBody||sel&&sel.summary||"").slice(0,1200);const quotedBlock=sel?"\n\n\n--- Original Message ---\nFrom: "+sel.from+"\nDate: "+new Date(sel.receivedTime).toLocaleString()+"\nSubject: "+sel.subject+"\n\n"+bodyText:"";const sig="\n\n--\nAlfonso Mendez\nPresident & CEO | Metwall\nM (281) 827 3470 | D (346) 406 1330\nwww.metwall.com";if(mode==="reply"){setComposeTo(sel?decodeEmail(sel.from):"");setComposeCC("");setComposeSubj(sel?"RE: "+sel.subject:"");setComposeBody(sig);}else if(mode==="replyall"){console.log("DEBUG ccAddress:",sel&&sel.ccAddress);console.log("DEBUG toAddress:",sel&&sel.toAddress);setComposeTo(sel?decodeEmail(sel.from):"");const decodeEntities=s=>(s||"").replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&quot;/g,'"').replace(/&amp;/g,"&");const others=decodeEntities(sel.toAddress||"")+" "+decodeEntities(sel.ccAddress||"");const emailRx=/[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}/g;const ccList=[...new Set((others.match(emailRx)||[]).filter(e=>e.toLowerCase()!=="alfonso@metwall.com"&&e.toLowerCase()!=="alfonso.mendez@metrika.mx"))].join(", ");console.log("DEBUG ccList:",ccList);setComposeCC(ccList);setComposeSubj(sel?"RE: "+sel.subject:"");setComposeBody(sig);}
+    const decodeEmail=e=>(e||"").replace(/&quot;/g,"").replace(/&lt;/g,"").replace(/&gt;/g,"").replace(/<[^>]+>/g,"").trim();const bodyText=strip(emailBody||sel&&sel.summary||"").slice(0,1200);const quotedBlock=sel?"\n\n\n--- Original Message ---\nFrom: "+sel.from+"\nDate: "+new Date(sel.receivedTime).toLocaleString()+"\nSubject: "+sel.subject+"\n\n"+bodyText:"";const sig="\n\n--\nAlfonso Mendez\nPresident & CEO | Metwall\nM (281) 827 3470 | D (346) 406 1330\nwww.metwall.com";const sigHtml=sigImage?`<br><br><img src="${sigImage}" style="max-width:400px;display:block" alt="Signature"/>`:`<br><br><strong>Alfonso Mendez</strong><br>President &amp; CEO | Metwall<br>M (281) 827 3470 | D (346) 406 1330<br>www.metwall.com`;if(mode==="reply"){setComposeTo(sel?decodeEmail(sel.from):"");setComposeCC("");setComposeSubj(sel?"RE: "+sel.subject:"");setComposeBody(sig);}else if(mode==="replyall"){console.log("DEBUG ccAddress:",sel&&sel.ccAddress);console.log("DEBUG toAddress:",sel&&sel.toAddress);setComposeTo(sel?decodeEmail(sel.from):"");const decodeEntities=s=>(s||"").replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&quot;/g,'"').replace(/&amp;/g,"&");const others=decodeEntities(sel.toAddress||"")+" "+decodeEntities(sel.ccAddress||"");const emailRx=/[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}/g;const ccList=[...new Set((others.match(emailRx)||[]).filter(e=>e.toLowerCase()!=="alfonso@metwall.com"&&e.toLowerCase()!=="alfonso.mendez@metrika.mx"))].join(", ");console.log("DEBUG ccList:",ccList);setComposeCC(ccList);setComposeSubj(sel?"RE: "+sel.subject:"");setComposeBody(sig);}
     else{setComposeTo("");setComposeSubj(sel?"FW: "+sel.subject:"");setComposeBody(sel?"\n\n--- Forwarded ---\nFrom: "+sel.from+"\nSubject: "+sel.subject+"\n\n"+strip(emailBody||sel.summary).slice(0,300):"");}
     setCompose(mode);
   };
@@ -394,7 +395,7 @@ function App(){
   const sendCompose=async()=>{
     if(!composeTo||!composeBody.trim())return;
     setSending(true);
-    const html="<div>"+composeBody.replace(/\n/g,"<br>")+"<br><br><hr style='border:none;border-top:1px solid #eee;margin:16px 0'><strong>Alfonso Mendez</strong><br>President & CEO | Metwall<br>M (281) 827 3470 | www.metwall.com</div>";
+    const html="<div>"+composeBody.replace(/\n/g,"<br>")+"<hr style='border:none;border-top:1px solid #eee;margin:16px 0'>"+sigHtml+"</div>";
     try{
       const endpoint=composeMode==="reply"?"/reply":"/forward";
       const payload={fromAddress:"alfonso@metwall.com",toAddress:composeTo,ccAddress:composeCC||undefined,subject:composeSubj,content:html};
@@ -1238,6 +1239,15 @@ const approveDraft=async()=>{
                   <div style={{display:"flex",gap:8,marginTop:8}}>
                     <button className="btn blue" style={{fontSize:11}} onClick={()=>{localStorage.setItem("aiPersonality",aiPersonality);toast_("✓ Personality saved!");}}>Save</button>
                     <button className="btn ghost" style={{fontSize:11}} onClick={()=>{const def="You are Alfonso Mendez, President & CEO of Metwall, a glass wall systems company. Write concise, professional replies. Match the language of the sender (English or Spanish). Be direct and solution-focused.";setAiPersonality(def);localStorage.setItem("aiPersonality",def);toast_("↺ Reset to default");}}>Reset</button>
+                  </div>
+                </div>
+                <div className="section-card" style={{borderRadius:12,padding:18,marginBottom:16}}>
+                  <div style={{fontSize:13,fontWeight:600,marginBottom:4}}>🖊️ Signature Image</div>
+                  <div style={{fontSize:11,opacity:.6,marginBottom:10}}>Upload your signature image (PNG/JPG). It will be used in all replies.</div>
+                  {sigImage&&<img src={sigImage} style={{maxWidth:"100%",maxHeight:120,marginBottom:10,borderRadius:6,border:"1px solid rgba(128,128,128,.2)"}} alt="Signature preview"/>}
+                  <div style={{display:"flex",gap:8,alignItems:"center"}}>
+                    <input type="file" accept="image/*" style={{fontSize:11,flex:1}} onChange={e=>{const file=e.target.files[0];if(!file)return;const reader=new FileReader();reader.onload=ev=>{const b64=ev.target.result;setSigImage(b64);localStorage.setItem("sigImage",b64);toast_("✓ Signature image saved!");};reader.readAsDataURL(file);}}/>
+                    {sigImage&&<button className="btn red" style={{fontSize:11}} onClick={()=>{setSigImage("");localStorage.removeItem("sigImage");toast_("Signature removed");}}>Remove</button>}
                   </div>
                 </div>
                 <div className="section-card" style={{borderRadius:12,padding:18}}>
