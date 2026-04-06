@@ -387,7 +387,7 @@ function App(){
 
   const openCompose=(mode)=>{
     setComposeMode(mode);
-    const decodeEmail=e=>(e||"").replace(/&quot;/g,"").replace(/&lt;/g,"").replace(/&gt;/g,"").replace(/<[^>]+>/g,"").trim();const bodyText=strip(emailBody||sel&&sel.summary||"").slice(0,1200);const quotedBlock=sel?"\n\n\n--- Original Message ---\nFrom: "+sel.from+"\nDate: "+new Date(sel.receivedTime).toLocaleString()+"\nSubject: "+sel.subject+"\n\n"+bodyText:"";const sig="\n\n--\nAlfonso Mendez\nPresident & CEO | Metwall\nM (281) 827 3470 | D (346) 406 1330\nwww.metwall.com";const sigHtml=sigImage?`<br><br><img src="${sigImage}" style="max-width:400px;display:block" alt="Signature"/>`:`<br><br><strong>Alfonso Mendez</strong><br>President &amp; CEO | Metwall<br>M (281) 827 3470 | D (346) 406 1330<br>www.metwall.com`;if(mode==="reply"){setComposeTo(sel?decodeEmail(sel.from):"");setComposeCC("");setComposeSubj(sel?"RE: "+sel.subject:"");setComposeBody(sig);}else if(mode==="replyall"){console.log("DEBUG ccAddress:",sel&&sel.ccAddress);console.log("DEBUG toAddress:",sel&&sel.toAddress);setComposeTo(sel?decodeEmail(sel.from):"");const decodeEntities=s=>(s||"").replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&quot;/g,'"').replace(/&amp;/g,"&");const others=decodeEntities(sel.toAddress||"")+" "+decodeEntities(sel.ccAddress||"");const emailRx=/[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}/g;const ccList=[...new Set((others.match(emailRx)||[]).filter(e=>e.toLowerCase()!=="alfonso@metwall.com"&&e.toLowerCase()!=="alfonso.mendez@metrika.mx"))].join(", ");console.log("DEBUG ccList:",ccList);setComposeCC(ccList);setComposeSubj(sel?"RE: "+sel.subject:"");setComposeBody(sig);}
+    const decodeEmail=e=>(e||"").replace(/&quot;/g,"").replace(/&lt;/g,"").replace(/&gt;/g,"").replace(/<[^>]+>/g,"").trim();const bodyText=strip(emailBody||sel&&sel.summary||"").slice(0,1200);const quotedBlock=sel?"\n\n\n--- Original Message ---\nFrom: "+sel.from+"\nDate: "+new Date(sel.receivedTime).toLocaleString()+"\nSubject: "+sel.subject+"\n\n"+bodyText:"";const sig="\n\n--\nAlfonso Mendez\nPresident & CEO | Metwall\nM (281) 827 3470 | D (346) 406 1330\nwww.metwall.com";const sigHtml=sigImage?`<br><br><img src="${sigImage}" style="max-width:400px;display:block" alt="Signature"/>`:`<br><br><strong>Alfonso Mendez</strong><br>President &amp; CEO | Metwall<br>M (281) 827 3470 | D (346) 406 1330<br>www.metwall.com`;if(mode==="reply"){setComposeTo(sel?decodeEmail(sel.from):"");setComposeCC("");setComposeSubj(sel?"RE: "+sel.subject:"");setComposeBody("");}else if(mode==="replyall"){console.log("DEBUG ccAddress:",sel&&sel.ccAddress);console.log("DEBUG toAddress:",sel&&sel.toAddress);setComposeTo(sel?decodeEmail(sel.from):"");const decodeEntities=s=>(s||"").replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&quot;/g,'"').replace(/&amp;/g,"&");const others=decodeEntities(sel.toAddress||"")+" "+decodeEntities(sel.ccAddress||"");const emailRx=/[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}/g;const ccList=[...new Set((others.match(emailRx)||[]).filter(e=>e.toLowerCase()!=="alfonso@metwall.com"&&e.toLowerCase()!=="alfonso.mendez@metrika.mx"))].join(", ");console.log("DEBUG ccList:",ccList);setComposeCC(ccList);setComposeSubj(sel?"RE: "+sel.subject:"");setComposeBody("");}
     else{setComposeTo("");setComposeSubj(sel?"FW: "+sel.subject:"");setComposeBody(sel?"\n\n--- Forwarded ---\nFrom: "+sel.from+"\nSubject: "+sel.subject+"\n\n"+strip(emailBody||sel.summary).slice(0,300):"");}
     setCompose(mode);
   };
@@ -733,6 +733,16 @@ const approveDraft=async()=>{
             <textarea value={composeBody} onChange={e=>setComposeBody(e.target.value)}
               style={{border:"none",padding:"12px 16px",fontSize:13,lineHeight:1.7,resize:"none",minHeight:160,background:"transparent",outline:"none",flexShrink:0}}
               placeholder="Write your message..."/>
+            {sigImage&&(
+              <div style={{padding:"8px 16px 0 16px",borderTop:"1px solid rgba(128,128,128,.1)"}}>
+                <img src={sigImage} style={{maxWidth:380,display:"block"}} alt="Signature"/>
+              </div>
+            )}
+            {!sigImage&&(
+              <div style={{padding:"0 16px 8px 16px",fontSize:12,opacity:.5,lineHeight:1.8}}>
+                <strong>Alfonso Mendez</strong><br/>President & CEO | Metwall<br/>M (281) 827 3470 | D (346) 406 1330<br/>www.metwall.com
+              </div>
+            )}
             {emailBody&&(
               <div style={{borderTop:"2px solid #e0e0e0",flex:1,overflow:"auto",background:"#fafafa"}}>
                 <div style={{padding:"8px 16px",fontSize:11,color:"#888",borderBottom:"1px solid #eee"}}>
