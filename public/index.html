@@ -270,7 +270,7 @@ function App(){
     }catch{toast_("Failed to load emails","error");}
     setLoadEmails(false);
   };
-  React.useEffect(()=>{fetchEmails();},[]);
+  React.useEffect(()=>{fetchEmails();const stored=localStorage.getItem("sigImage");if(stored){fetch(BASE+"/signature",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({image:stored})}).then(()=>{setSigImageUrl(BASE+"/signature.png");localStorage.setItem("sigImageUrl",BASE+"/signature.png");}).catch(()=>{});}},[]);
 
   React.useEffect(()=>{saveState({lanes,overrides,rules,hiddenLanes:[...hiddenLanes],emailFlags,insts,readIds:[...readIds]});},[lanes,overrides,rules,hiddenLanes,emailFlags,insts,readIds]);
   
@@ -396,7 +396,7 @@ function App(){
   const sendCompose=async()=>{
     if(!composeTo||!composeBody.trim())return;
     setSending(true);
-    const sigHtmlSend=sigImage?`<img src="${sigImage}" style="max-width:400px;display:block" alt="Signature"/>`:`<strong>Alfonso Mendez</strong><br>President &amp; CEO | Metwall<br>M (281) 827 3470 | D (346) 406 1330<br>www.metwall.com`;const html="<div>"+composeBody.replace(/\n/g,"<br>")+"<hr style='border:none;border-top:1px solid #eee;margin:16px 0'>"+sigHtmlSend+"</div>";
+    const sigHtmlSend=sigImageUrl?`<img src="${sigImageUrl}" style="max-width:400px;display:block" alt="Signature"/>`:`<strong>Alfonso Mendez</strong><br>President &amp; CEO | Metwall<br>M (281) 827 3470 | D (346) 406 1330<br>www.metwall.com`;const html="<div>"+composeBody.replace(/\n/g,"<br>")+"<hr style='border:none;border-top:1px solid #eee;margin:16px 0'>"+sigHtmlSend+"</div>";
     try{
       const endpoint=composeMode==="reply"?"/reply":"/forward";
       const payload={fromAddress:"alfonso@metwall.com",toAddress:composeTo,ccAddress:composeCC||undefined,subject:composeSubj,content:html};
@@ -741,7 +741,7 @@ const approveDraft=async()=>{
                 </div>
                 <iframe srcDoc={emailBody} style={{width:"100%",border:"none",minHeight:300,display:"block"}} sandbox="allow-same-origin"/>
                 <div style={{padding:"12px 16px",borderTop:"1px solid #eee",background:"white"}}>
-                  {sigImage?<img src={sigImage} style={{maxWidth:360,display:"block",marginTop:8}} alt="Signature"/>:<div style={{fontSize:12,opacity:.5,paddingTop:8}}>Alfonso Mendez | President & CEO | Metwall</div>}
+                  {sigImageUrl?<img src={sigImageUrl} style={{maxWidth:360,display:"block",marginTop:8}} alt="Signature"/>:<div style={{fontSize:12,opacity:.5,paddingTop:8}}>Alfonso Mendez | President & CEO | Metwall</div>}
                 </div>
               </div>
             )}
