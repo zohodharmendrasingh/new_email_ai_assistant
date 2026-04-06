@@ -583,7 +583,7 @@ const approveDraft=async()=>{
     return (
       <div
         className={"card"+(sel&&sel.id===email.id?" sel":"")+(approved.has(email.id)?" ok":"")}
-        style={{opacity:dragId===email.id?.4:1}}
+        style={{opacity:dragId===email.id?0.4:1}}
         draggable="true"
         onDragStart={e=>{e.dataTransfer.effectAllowed="move";setDragId(email.id);}}
         onDragEnd={()=>setDragId(null)}
@@ -858,7 +858,7 @@ const approveDraft=async()=>{
             const uc=unreadCount(l.id);
             const isHidden=hiddenLanes.has(l.id);
             return(
-              <div key={l.id} style={{padding:"4px 16px",display:"flex",alignItems:"center",justifyContent:"space-between",fontSize:11,opacity:isHidden?.4:.7}}>
+              <div key={l.id} style={{padding:"4px 16px",display:"flex",alignItems:"center",justifyContent:"space-between",fontSize:11,opacity:isHidden?0.4:0.7}}>
                 <span>{l.icon} {l.label.split(" ")[0]}</span>
                 <div style={{display:"flex",gap:3,alignItems:"center"}}>
                   {isHidden
@@ -956,7 +956,7 @@ const approveDraft=async()=>{
                   const uc=unreadCount(lane.id);
                   return(
                     <div key={lane.id} className="lane-wrap"
-                      style={{opacity:dragLaneId===lane.id?.35:1,transition:"opacity .15s"}}
+                      style={{opacity:dragLaneId===lane.id?0.35:1,transition:"opacity .15s"}}
                       onDragOver={e=>{if(dragLaneId&&dragLaneId!==lane.id){e.preventDefault();setDragLaneOver(lane.id);}}}
                       onDragLeave={e=>{if(!e.currentTarget.contains(e.relatedTarget))setDragLaneOver(null);}}
                       onDrop={e=>{e.preventDefault();if(dragLaneId&&dragLaneId!==lane.id)reorderLane(dragLaneId,lane.id);setDragLaneId(null);setDragLaneOver(null);}}>
