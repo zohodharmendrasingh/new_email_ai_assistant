@@ -395,7 +395,7 @@ function App(){
   const sendCompose=async()=>{
     if(!composeTo||!composeBody.trim())return;
     setSending(true);
-    const html="<div>"+composeBody.replace(/\n/g,"<br>")+"<hr style='border:none;border-top:1px solid #eee;margin:16px 0'>"+sigHtml+"</div>";
+    const sigHtmlSend=sigImage?`<br><br><img src="${sigImage}" style="max-width:400px;display:block" alt="Signature"/>`:`<br><br><strong>Alfonso Mendez</strong><br>President &amp; CEO | Metwall<br>M (281) 827 3470 | D (346) 406 1330<br>www.metwall.com`;const html="<div>"+composeBody.replace(/\n/g,"<br>")+"<hr style='border:none;border-top:1px solid #eee;margin:16px 0'>"+sigHtmlSend+"</div>";
     try{
       const endpoint=composeMode==="reply"?"/reply":"/forward";
       const payload={fromAddress:"alfonso@metwall.com",toAddress:composeTo,ccAddress:composeCC||undefined,subject:composeSubj,content:html};
