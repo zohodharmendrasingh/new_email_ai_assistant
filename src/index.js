@@ -455,6 +455,26 @@ app.get("/drafts", async (req, res) => {
   } catch(e) { res.status(500).json({ error: e.message }); }
 });
 
+
+// Signature image upload/serve
+app.post("/signature", (req, res) => {
+  try {
+    const { image } = req.body;
+    if (!image) return res.status(400).json({ error: "No image" });
+    const base64 = image.replace(/^data:image\/\w+;base64,/, "");
+    writeFileSync(SIG_PATH, Buffer.from(base64, 'base64'));
+    res.json({ success: true });
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+app.get("/signature.png", (req, res) => {
+  try {
+    if (!existsSync(SIG_PATH)) return res.status(404).send("Not found");
+    const img = readFileSync(SIG_PATH);
+    res.set("Content-Type", "image/png");
+    res.set("Access-Control-Allow-Origin", "*");
+    res.send(img);
+  } catch(e) { res.status(500).send("Error"); }
+});
 app.listen(PORT, () => {
   console.log(`Email triage webhook running on http://localhost:${PORT}`);
   console.log(`POST /triage  { subject, body }`);

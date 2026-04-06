@@ -195,6 +195,7 @@ function App(){
   const [checkedIds,setCheckedIds]=React.useState(new Set());
   const [cardExpanded,setCardExpanded]=React.useState(false);
   const [sigImage,setSigImage]=React.useState(localStorage.getItem("sigImage")||"");
+  const [sigImageUrl,setSigImageUrl]=React.useState(localStorage.getItem("sigImageUrl")||"");
   const [aiPersonality,setAiPersonality]=React.useState(localStorage.getItem("aiPersonality")||"You are Alfonso Mendez, President & CEO of Metwall, a glass wall systems company. Write concise, professional replies. Match the language of the sender (English or Spanish). Be direct and solution-focused.");
   const scrollSaveRef=React.useRef(0);
   const [emailBody,setEmailBody]=React.useState(null);
@@ -395,7 +396,7 @@ function App(){
   const sendCompose=async()=>{
     if(!composeTo||!composeBody.trim())return;
     setSending(true);
-    const sigHtmlSend=sigImage?`<br><br><img src="${sigImage}" style="max-width:400px;display:block" alt="Signature"/>`:`<br><br><strong>Alfonso Mendez</strong><br>President &amp; CEO | Metwall<br>M (281) 827 3470 | D (346) 406 1330<br>www.metwall.com`;const html="<div>"+composeBody.replace(/\n/g,"<br>")+"<hr style='border:none;border-top:1px solid #eee;margin:16px 0'>"+sigHtmlSend+"</div>";
+    const sigUrl=sigImageUrl||"";const sigHtmlSend=sigUrl?`<br><br><img src="${sigUrl}?t=${Date.now()}" style="max-width:400px;display:block" alt="Signature"/>`:`<br><br><strong>Alfonso Mendez</strong><br>President &amp; CEO | Metwall<br>M (281) 827 3470 | D (346) 406 1330<br>www.metwall.com`;const html="<div>"+composeBody.replace(/\n/g,"<br>")+"<hr style='border:none;border-top:1px solid #eee;margin:16px 0'>"+sigHtmlSend+"</div>";
     try{
       const endpoint=composeMode==="reply"?"/reply":"/forward";
       const payload={fromAddress:"alfonso@metwall.com",toAddress:composeTo,ccAddress:composeCC||undefined,subject:composeSubj,content:html};
