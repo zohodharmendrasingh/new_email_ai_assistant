@@ -116,7 +116,7 @@ img[src=""], img:not([src]), img[src^="cid:"] { display: none !important; } img 
 <body class="light">
 <div id="root"></div>
 <script type="text/babel">
-const BASE="http://localhost:3000/server/email_assistantversiontwo_function";
+const BASE="/server/email_assistantversiontwo_function";
 const APP_VERSION = "v1.4.0";
 function loadState(){try{const s=localStorage.getItem("metwall_v1");return s?JSON.parse(s):{}}catch{return {}}}
 function saveState(p){try{localStorage.setItem("metwall_v1",JSON.stringify({...loadState(),...p}));}catch{}}
