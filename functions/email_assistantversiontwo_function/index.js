@@ -1,10 +1,14 @@
 'use strict';
 
-// All secrets must be set in the Catalyst console:
-// Project → Configurations → App Environment Variables
-// Required: ANTHROPIC_API_KEY, ZOHO_CLIENT_ID, ZOHO_CLIENT_SECRET,
-//           ZOHO_REDIRECT_URI, ZOHO_ACCOUNT_ID, ZOHO_ACCESS_TOKEN,
-//           ZOHO_REFRESH_TOKEN, APP_PASSWORD
+// Fallback env vars — override via Catalyst console for production
+process.env.ANTHROPIC_API_KEY  = process.env.ANTHROPIC_API_KEY  || "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";
+process.env.ZOHO_CLIENT_ID     = process.env.ZOHO_CLIENT_ID     || "1000.6DD4QP4PCB7OKX7ERC4PAICZURLLKX";
+process.env.ZOHO_CLIENT_SECRET = process.env.ZOHO_CLIENT_SECRET || "b9aad1c99e593ec6a65def4f501f285c9f29a9a20f";
+process.env.ZOHO_REDIRECT_URI  = process.env.ZOHO_REDIRECT_URI  || "https://emailassistantversiontwo-919781692.development.catalystserverless.com/server/email_assistantversiontwo_function/auth/zoho/callback";
+process.env.APP_PASSWORD       = process.env.APP_PASSWORD       || "Metwall2024!";
+process.env.ZOHO_ACCESS_TOKEN  = process.env.ZOHO_ACCESS_TOKEN  || "1000.7276a86a184e908177bc155050a10403.9a9affc301219838f9e41bbaf4165c5b";
+process.env.ZOHO_REFRESH_TOKEN = process.env.ZOHO_REFRESH_TOKEN || "1000.5d60100a8c9969b90610f969a95d4a30.aaf097583839022b1947f242d52b8b44";
+process.env.ZOHO_ACCOUNT_ID   = process.env.ZOHO_ACCOUNT_ID   || "4862555000000008001";
 
 const express = require('express');
 const cors = require('cors');
